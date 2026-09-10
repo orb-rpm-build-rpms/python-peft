@@ -24,9 +24,11 @@ Summary:        %{summary}
 
 %description -n python3-peft %_description
 
-# For official Fedora packages, review which extras should be actually packaged
-# See: https://docs.fedoraproject.org/en-US/packaging-guidelines/Python/#Extras
-%pyproject_extras_subpkg -n python3-peft dev,docs-specific,quality,test
+# No extras are packaged. peft is pulled in only as a runtime dependency (LoRA
+# support); its dev/docs-specific/quality/test extras add nothing vLLM needs and
+# are unbuildable here (they require diffusers, hf-doc-builder, parameterized and
+# ruff, none of which are packaged). peft's core deps (torch, transformers,
+# accelerate, safetensors, huggingface-hub, numpy, ...) are enough.
 
 
 %prep
@@ -34,8 +36,7 @@ Summary:        %{summary}
 
 
 %generate_buildrequires
-# Keep only those extras which you actually want to package or use during tests
-%pyproject_buildrequires -x dev,docs-specific,quality,test
+%pyproject_buildrequires
 
 
 %build
