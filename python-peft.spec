@@ -50,7 +50,14 @@ Summary:        %{summary}
 
 
 %check
-%pyproject_check_import
+# Exclude optional tuner backends whose imports need unpackaged deps: the *.bnb
+# modules are bitsandbytes quantization backends (import bitsandbytes) and
+# lora.corda is a CorDA init method (import attr). None is used unless the extra
+# dep is present; every other peft module is still import-checked. All -e flags
+# must stay on one line -- pyproject_check_import parses its options with a Lua
+# getopt over the macro's args, and a backslash line-continuation makes it see an
+# empty option list, silently dropping the excludes.
+%pyproject_check_import -e peft.tuners.hira.bnb -e peft.tuners.lora.bnb -e peft.tuners.lora.corda -e peft.tuners.oft.bnb -e peft.tuners.pvera.bnb -e peft.tuners.randlora.bnb -e peft.tuners.road.bnb
 
 
 %files -n python3-peft -f %{pyproject_files}
